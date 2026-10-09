@@ -43,10 +43,16 @@ const toBool = (v: unknown) => {
   return undefined;
 };
 
+// Keys are matched loosely: "Caller Phone", "caller_phone" and "CallerPhone" are the same.
+const keyOf = (k: string) => k.toLowerCase().replace(/[^a-z0-9]/g, "");
+
 function pick(ls: Obj[], ...keys: string[]): any {
-  for (const l of ls) for (const k of keys) {
-    const v = clean(l[k]);
-    if (v !== undefined) return v;
+  for (const l of ls) {
+    const byKey = new Map(Object.entries(l).map(([k, v]) => [keyOf(k), v]));
+    for (const k of keys) {
+      const v = clean(byKey.get(keyOf(k)));
+      if (v !== undefined) return v;
+    }
   }
   return undefined;
 }
