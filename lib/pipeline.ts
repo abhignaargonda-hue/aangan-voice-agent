@@ -1,5 +1,5 @@
 // End-of-call pipeline (components map, "call ends" onwards):
-// Vaani record → Gemini structures it → rubric re-check → Supabase row →
+// Vaani record → Gemini structures it → rubric re-check → Neon row →
 // Telegram handoff / escalation → HubSpot for new qualified live calls.
 // Each downstream step is independent: one failing never loses the call.
 

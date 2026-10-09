@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 const LABELS: Record<string, string> = {
   gemini: "Gemini (structuring + handoff note)",
-  supabase: "Supabase (call log)",
+  database: "Neon database (call log)",
   telegram: "Telegram (designer handoff)",
   telegramEscalation: "Telegram (escalations)",
   hubspot: "HubSpot (founder pipeline)",

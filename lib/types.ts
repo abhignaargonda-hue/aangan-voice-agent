@@ -48,7 +48,7 @@ export interface CallRecord {
   voice_minutes: number;
 }
 
-// One row per call in the call log (Supabase `calls` table).
+// One row per call in the call log (Neon `calls` table).
 export interface CallRow extends CallRecord {
   id: string;
   created_at: string;

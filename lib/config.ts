@@ -32,9 +32,8 @@ export const config = {
   // Vaani
   vaaniCostPerMinInr: num("VAANI_COST_PER_MIN_INR", 6),
 
-  // Supabase
-  supabaseUrl: env("SUPABASE_URL"),
-  supabaseServiceKey: env("SUPABASE_SERVICE_ROLE_KEY"),
+  // Neon Postgres (call log)
+  databaseUrl: env("DATABASE_URL"),
 
   // Telegram
   telegramBotToken: env("TELEGRAM_BOT_TOKEN"),
@@ -61,7 +60,7 @@ export const config = {
 
 export const integrations = () => ({
   gemini: !!config.geminiApiKey,
-  supabase: !!(config.supabaseUrl && config.supabaseServiceKey),
+  database: !!config.databaseUrl,
   telegram: !!(config.telegramBotToken && config.telegramDesignerChatId),
   telegramEscalation: !!(config.telegramBotToken && (config.telegramEscalationChatId || config.telegramDesignerChatId)),
   hubspot: !!config.hubspotToken,

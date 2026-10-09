@@ -1,4 +1,4 @@
--- Aangan Studio voice agent: one row per call. Run once in Supabase → SQL Editor.
+-- Aangan Studio voice agent: one row per call. Applied by `npm run db:migrate`.
 
 create table if not exists public.calls (
   id uuid primary key default gen_random_uuid(),
@@ -70,8 +70,3 @@ create table if not exists public.bookings (
 );
 
 create index if not exists bookings_created_idx on public.bookings (created_at desc);
-
--- The app talks to Supabase only from the server with the service-role key.
--- Lock the tables down so the public anon key can read nothing.
-alter table public.calls enable row level security;
-alter table public.bookings enable row level security;

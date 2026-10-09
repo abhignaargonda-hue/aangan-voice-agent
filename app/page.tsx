@@ -86,7 +86,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
     <>
       <h1>Every call, answered</h1>
       <p className="sub">
-        Live from the call log ({storageMode() === "supabase" ? "Supabase" : "local test file — connect Supabase before going live"}).
+        Live from the call log ({storageMode() === "neon" ? "Neon" : "local test file — set DATABASE_URL before going live"}).
       </p>
 
       <div className="filters">
