@@ -24,7 +24,7 @@ export const config = {
 
   // Gemini
   geminiApiKey: env("GEMINI_API_KEY"),
-  geminiModel: env("GEMINI_MODEL", "gemini-2.5-flash"),
+  geminiModel: env("GEMINI_MODEL", "gemini-3.8-flash"),
   geminiInputUsdPerM: num("GEMINI_INPUT_USD_PER_M", 0.3),
   geminiOutputUsdPerM: num("GEMINI_OUTPUT_USD_PER_M", 2.5),
   usdToInr: num("USD_TO_INR", 88),

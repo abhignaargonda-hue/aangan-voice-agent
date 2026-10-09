@@ -18,9 +18,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid JSON" }, { status: 400 });
   }
 
-  // Only the end-of-call event carries the record; acknowledge anything else.
+  // Vaani sends many events per call; only `call_postprocessing` carries the
+  // transcript and extracted fields. Acknowledge the rest without storing them.
   const event = String(payload?.event ?? payload?.type ?? payload?.event_type ?? "");
-  if (event && !/(completed|ended|end|analy[sz]ed|post_call|finished|hangup|call_record)/i.test(event)) {
+  if (event && !/(postprocessing|completed|analy[sz]ed|post_call|call_record)/i.test(event)) {
     return NextResponse.json({ ok: true, ignored: event });
   }
 

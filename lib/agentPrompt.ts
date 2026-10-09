@@ -183,3 +183,20 @@ export function toolDefinitions(baseUrl: string) {
     },
   ];
 }
+
+// Vaani → Agent → Analysis → Data collection. Names must match exactly (max 30 chars).
+// caller_phone matters most: Vaani's webhook does not include the caller's number.
+export const extractionDataPoints: { name: string; prompt: string; values?: string[]; required?: boolean }[] = [
+  { name: "caller_phone", required: true, prompt: "The caller's phone number as confirmed on the call, digits only with country code (e.g. +919812345678). Use the caller ID if the caller confirmed it." },
+  { name: "caller_name", required: true, prompt: "The caller's name as they gave it." },
+  { name: "route", required: true, prompt: "The route the agent decided on the call.", values: ["QUALIFIED", "QUALIFIED_FLAGGED", "NOT_A_FIT", "ESCALATE", "INCOMPLETE", "OTHER"] },
+  { name: "booking_slot", required: true, prompt: "If a consultation was booked, its start time in ISO 8601 with +05:30 offset. Otherwise null." },
+  { name: "booking_type", required: true, prompt: "Where the consultation will happen, if booked.", values: ["site_visit", "studio"] },
+  { name: "call_type", prompt: "What kind of call this was.", values: ["new_enquiry", "existing_client", "repeat_enquiry", "other"] },
+  { name: "locality", prompt: "The area of Pune/PCMC (or other city) where the property is." },
+  { name: "scope_description", prompt: "What the caller wants done, in one sentence." },
+  { name: "completion_needed_by", prompt: "When the caller needs the project complete, in their words." },
+  { name: "budget_volunteered", prompt: "A budget figure ONLY if the caller volunteered one, in their words. Otherwise null." },
+  { name: "price_asked", prompt: "Did the caller ask about price or cost?", values: ["Yes", "No"] },
+  { name: "flags", prompt: "Semicolon-separated notes for the designer: decision-maker unclear, budget borderline, rented, asked for Nikhil, site visit preferred, earlier enquiry not followed up, etc." },
+];

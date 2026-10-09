@@ -215,7 +215,8 @@ function slim(o: Partial<CallRecord>) {
 function mergeCriteria(fromAgent: Criteria | null | undefined, fromAi: Criteria | undefined): Criteria {
   const base = emptyCriteria();
   const keys = Object.keys(base) as (keyof Criteria)[];
-  const agentIsDefault = !fromAgent || keys.every((k) => !fromAgent[k]?.evidence);
+  // Rows start with blank default criteria; only real agent-supplied criteria count.
+  const agentIsDefault = !fromAgent || JSON.stringify(fromAgent) === JSON.stringify(emptyCriteria());
   for (const k of keys) {
     const a = agentIsDefault ? undefined : fromAgent?.[k];
     const g = fromAi?.[k];

@@ -89,6 +89,7 @@ export default async function CallPage({ params }: { params: Promise<{ id: strin
             <dt>Voice</dt><dd>{c.voice_minutes} min · ₹{Number(c.voice_cost_inr).toFixed(2)}</dd>
             <dt>Gemini</dt><dd>{c.ai_input_tokens + c.ai_output_tokens} tokens · ₹{Number(c.ai_cost_inr).toFixed(3)}</dd>
             {c.linked_call_id && <><dt>Earlier call</dt><dd><Link href={`/calls/${c.linked_call_id}`}>same number, last 24h</Link></dd></>}
+            {(c.raw_payload as any)?.data?.recording_url && <><dt>Recording</dt><dd><a href={(c.raw_payload as any).data.recording_url} target="_blank" rel="noreferrer">Listen</a></dd></>}
             <dt>Vaani call id</dt><dd className="muted" style={{ wordBreak: "break-all" }}>{c.call_id}</dd>
             {c.processing_error && <><dt>Errors</dt><dd className="no">{c.processing_error}</dd></>}
           </dl>

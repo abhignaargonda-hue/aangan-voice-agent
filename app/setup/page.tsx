@@ -1,4 +1,4 @@
-import { agentPrompt, toolDefinitions } from "@/lib/agentPrompt";
+import { agentPrompt, extractionDataPoints, toolDefinitions } from "@/lib/agentPrompt";
 import { config, integrations } from "@/lib/config";
 import { storageMode } from "@/lib/store";
 import { Fragment } from "react";
@@ -43,13 +43,26 @@ export default function Setup() {
         <p className="muted">Or send the secret as an <code>x-aangan-secret</code> header, or use Vaani's signing secret (HMAC-SHA256 of the body) with the same value.</p>
       </div>
 
-      <h2>2 · Agent tools (custom functions)</h2>
+      <h2>2 · Data collection fields (Vaani → Analysis → Extraction)</h2>
+      <div className="panel">
+        <p style={{ marginTop: 0 }}>Add each as a data point. The first five are required: Vaani's webhook does not include the caller's number, so <code>caller_phone</code> must come from here. Gemini fills in everything else from the transcript.</p>
+        <table>
+          <thead><tr><th>Name</th><th>Prompt</th><th>Allowed values</th></tr></thead>
+          <tbody>
+            {extractionDataPoints.map((d) => (
+              <tr key={d.name}><td><code>{d.name}</code>{d.required && <div className="no" style={{ fontSize: 12 }}>required</div>}</td><td>{d.prompt}</td><td className="muted">{d.values?.join(", ") ?? "free text"}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3 · Agent tools (custom functions)</h2>
       <div className="panel">
         <p style={{ marginTop: 0 }}>Add these two functions to the agent. Send the same secret as a header or query parameter.</p>
         <CopyBlock text={JSON.stringify(toolDefinitions(base), null, 2)} />
       </div>
 
-      <h2>3 · Agent prompt</h2>
+      <h2>4 · Agent prompt</h2>
       <div className="panel">
         <p style={{ marginTop: 0 }}>Paste this as the agent's system prompt. Open decisions (assistant name, escalation promise, commercial minimum, languages) come from environment variables.</p>
         <CopyBlock text={agentPrompt()} tall />

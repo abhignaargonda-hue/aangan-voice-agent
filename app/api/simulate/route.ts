@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       call_id: `sim-${crypto.randomUUID()}`,
       started_at: startedAt,
       duration_seconds: Number(body.duration_seconds) || lines * 15,
-      caller_phone: String(body.caller_phone ?? "+91 90000 00000"),
+      caller_phone: String(body.caller_phone ?? `+9190000${Math.floor(10000 + Math.random() * 89999)}`),
       transcript,
     },
     { isTest: true },
