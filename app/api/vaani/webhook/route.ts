@@ -21,8 +21,10 @@ export async function POST(req: Request) {
   // Vaani sends many events per call; only `call_postprocessing` carries the
   // transcript and extracted fields. Acknowledge the rest without storing them.
   const event = String(payload?.event ?? payload?.type ?? payload?.event_type ?? "");
-  if (event && !/(postprocessing|completed|analy[sz]ed|post_call|call_record)/i.test(event)) {
-    return NextResponse.json({ ok: true, ignored: event });
+  const hasTranscript = /"(transcript|transcription|transcript_text)"\s*:\s*("[^"]{20,}|\[)/.test(raw);
+  console.log(`[vaani] event=${event || "(none)"} transcript=${hasTranscript} keys=${Object.keys(payload ?? {}).join(",")}`);
+  if (!hasTranscript && !/(postprocessing|completed|analy[sz]ed|post_call|call_record)/i.test(event)) {
+    return NextResponse.json({ ok: true, ignored: event || "no transcript" });
   }
 
   const { row, duplicate } = await receiveCall(payload);
