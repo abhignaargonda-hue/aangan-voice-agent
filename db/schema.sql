@@ -70,3 +70,13 @@ create table if not exists public.bookings (
 );
 
 create index if not exists bookings_created_idx on public.bookings (created_at desc);
+
+-- Early call events (call_started / user_picked_up) carry the caller's number,
+-- which the end-of-call event may not. Matched to the call by call_id.
+create table if not exists public.call_events (
+  call_id text primary key,
+  created_at timestamptz not null default now(),
+  event text,
+  caller_phone text,
+  raw jsonb
+);

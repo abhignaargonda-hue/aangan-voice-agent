@@ -135,7 +135,7 @@ export function normalizeVaaniPayload(payload: unknown): NormalizedInput {
   if (typeof flags === "string") flags = flags.split(/[;\n]|,(?![^(]*\))/).map((f: string) => f.trim()).filter(Boolean);
 
   const partial: Partial<CallRecord> = {
-    call_id: String(pick(ls, "call_id", "callId", "call_sid", "id", "session_id", "conversation_id") ?? ""),
+    call_id: String(pick(ls, "call_id", "callId", "room_name", "call_sid", "id", "session_id", "conversation_id") ?? ""),
     started_at: startedAt,
     duration_seconds: duration ?? 0,
     answer_seconds: numOrNull(pick(ls, "answer_seconds", "ring_seconds", "time_to_answer")),

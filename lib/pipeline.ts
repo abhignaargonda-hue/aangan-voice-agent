@@ -8,7 +8,7 @@ import { geminiCostInr, structureCall } from "./gemini";
 import { pushToHubSpot } from "./hubspot";
 import { normalizeVaaniPayload } from "./normalize";
 import { computeRoute, detectBudgetAsked, detectPriceLeak, emptyCriteria, isAfterHours, isQualified } from "./rubric";
-import { findBooking, getCall, getCallByCallId, insertCall, recentCallsByPhone, updateCall } from "./store";
+import { callerPhoneFromEvents, findBooking, getCall, getCallByCallId, insertCall, recentCallsByPhone, updateCall } from "./store";
 import { sendEscalation, sendHandoff } from "./telegram";
 import type { CallRecord, CallRow, Criteria, Route } from "./types";
 
@@ -45,6 +45,15 @@ export async function processCall(id: string): Promise<CallRow> {
   const row = await getCall(id);
   if (!row) throw new Error(`call ${id} not found`);
   const errors: string[] = [];
+
+  // Caller's number from an earlier call_started event, if the agent didn't capture it.
+  if (!row.caller_phone) {
+    const phone = await callerPhoneFromEvents(row.call_id).catch(() => "");
+    if (phone) {
+      row.caller_phone = phone;
+      await updateCall(id, { caller_phone: phone });
+    }
+  }
 
   // Known fields from Vaani, minus empties.
   const known: Partial<CallRecord> = {};

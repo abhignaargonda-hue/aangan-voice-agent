@@ -1,6 +1,8 @@
 import { after, NextResponse } from "next/server";
 import { verifyVaani } from "@/lib/auth";
+import { normalizeVaaniPayload } from "@/lib/normalize";
 import { processCall, receiveCall } from "@/lib/pipeline";
+import { saveCallEvent } from "@/lib/store";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -24,10 +26,16 @@ export async function POST(req: Request) {
   const hasTranscript = /"(transcript|transcription|transcript_text)"\s*:\s*("[^"]{20,}|\[)/.test(raw);
   console.log(`[vaani] event=${event || "(none)"} transcript=${hasTranscript} keys=${Object.keys(payload ?? {}).join(",")}`);
   if (!hasTranscript && !/(postprocessing|completed|analy[sz]ed|post_call|call_record)/i.test(event)) {
-    return NextResponse.json({ ok: true, ignored: event || "no transcript" });
+    // Early events (call_started, user_picked_up…) may carry the caller's number,
+    // which the end-of-call event does not. Keep it for that call.
+    const { partial } = normalizeVaaniPayload(payload);
+    if (partial.call_id) await saveCallEvent(partial.call_id, event, partial.caller_phone ?? "", payload).catch(() => {});
+    return NextResponse.json({ ok: true, noted: event || "no transcript" });
   }
 
-  const { row, duplicate } = await receiveCall(payload);
+  // ?test=1 marks the call as a test: it is labelled on the dashboard and never sent to HubSpot.
+  const isTest = new URL(req.url).searchParams.get("test") === "1";
+  const { row, duplicate } = await receiveCall(payload, { isTest });
   if (!duplicate) {
     after(async () => {
       try {

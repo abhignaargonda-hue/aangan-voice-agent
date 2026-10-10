@@ -180,3 +180,32 @@ export async function findBooking(callId: string, phone: string): Promise<Bookin
   }
   return (callId && rows.find((r) => r.call_id === callId)) || (phone && rows.find((r) => r.caller_phone === phone)) || null;
 }
+
+// Early events (call_started etc.) keyed by call id, used to fill the caller's number.
+export async function saveCallEvent(callId: string, event: string, callerPhone: string, raw: unknown): Promise<void> {
+  if (!callId) return;
+  if (useDb()) {
+    await q(
+      `insert into call_events (call_id, event, caller_phone, raw) values ($1, $2, $3, $4)
+       on conflict (call_id) do update set caller_phone = coalesce(nullif(excluded.caller_phone, ''), call_events.caller_phone),
+       event = excluded.event, raw = excluded.raw`,
+      [callId, event, callerPhone, JSON.stringify(raw)],
+    );
+    return;
+  }
+  const rows = await readFile<any>("call_events.json");
+  const i = rows.findIndex((r) => r.call_id === callId);
+  const row = { call_id: callId, event, caller_phone: callerPhone || rows[i]?.caller_phone || "", raw };
+  if (i >= 0) rows[i] = row;
+  else rows.push(row);
+  await writeFile("call_events.json", rows);
+}
+
+export async function callerPhoneFromEvents(callId: string): Promise<string> {
+  if (!callId) return "";
+  if (useDb()) {
+    const rows = await q(`select caller_phone from call_events where call_id = $1`, [callId]);
+    return rows[0]?.caller_phone ?? "";
+  }
+  return (await readFile<any>("call_events.json")).find((r) => r.call_id === callId)?.caller_phone ?? "";
+}
