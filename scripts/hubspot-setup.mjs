@@ -56,9 +56,9 @@ const CONTACT_FIELDS = [
 ];
 
 const STAGES = [
-  ["Consultation booked", "0.2"],
-  ["Consultation done", "0.35"],
-  ["Design proposal sent", "0.5"],
+  ["Consultation booked", "0.1"],
+  ["Consultation done", "0.2"],
+  ["Design proposal sent", "0.35"],
   ["Design signed / advance paid", "0.8"],
   ["In execution", "0.9"],
   ["Project completed (won)", "1.0", true],
@@ -96,7 +96,17 @@ async function ensurePipeline() {
     if (!r.ok) throw new Error(`create pipeline: ${r.status} ${JSON.stringify(r.json).slice(0, 300)}`);
     p = r.json;
     console.log("  + pipeline Aangan Projects");
-  } else console.log("  = pipeline Aangan Projects (exists)");
+  } else {
+    console.log("  = pipeline Aangan Projects (exists), syncing probabilities");
+    for (const [label, probability, closed] of STAGES) {
+      const st = p.stages.find((x) => x.label === label);
+      if (!st) continue;
+      const r = await hs("PATCH", `/crm/v3/pipelines/deals/${p.id}/stages/${st.id}`, {
+        metadata: { probability, ...(closed ? { isClosed: "true" } : {}) },
+      });
+      if (!r.ok) throw new Error(`stage ${label}: ${r.status} ${JSON.stringify(r.json).slice(0, 200)}`);
+    }
+  }
   const first = [...p.stages].sort((a, b) => a.displayOrder - b.displayOrder)[0];
   return { pipelineId: p.id, stageId: first.id };
 }
