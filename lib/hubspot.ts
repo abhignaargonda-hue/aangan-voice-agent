@@ -112,6 +112,7 @@ export async function pushToHubSpot(row: CallRow): Promise<{ contactId: string; 
     aangan_decision_maker: row.decision_maker,
     aangan_flags: row.flags?.join("\n"),
     aangan_call_link: callLink,
+    aangan_lead_channel: "voice_agent",
   });
 
   const associations = [

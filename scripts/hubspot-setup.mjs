@@ -46,6 +46,9 @@ const DEAL_FIELDS = [
   select("aangan_decision_maker", "Decision-maker", "", [["self", "Caller decides"], ["authorised_on_behalf", "Authorised on behalf"], ["unclear", "Unclear"]]),
   area("aangan_flags", "Flags for designer", ""),
   text("aangan_call_link", "Call transcript link", "Aangan call log"),
+  select("aangan_lead_channel", "Lead channel", "How the lead came in: set automatically for the phone agent; choose Front desk (manual) when staff add a deal by hand", [
+    ["voice_agent", "Voice agent (phone)"], ["front_desk_manual", "Front desk (manual)"], ["whatsapp", "WhatsApp"], ["web_form", "Website form"], ["walk_in_referral", "Walk-in / direct referral"],
+  ]),
 ];
 
 const CONTACT_FIELDS = [
