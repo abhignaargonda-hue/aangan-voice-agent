@@ -56,9 +56,9 @@ export default function Setup() {
         </table>
       </div>
 
-      <h2>3 · Agent tools (custom functions)</h2>
+      <h2>3 · Optional: our own booking tools</h2>
       <div className="panel">
-        <p style={{ marginTop: 0 }}>Add these two functions to the agent. Send the same secret as a header or query parameter.</p>
+        <p style={{ marginTop: 0 }}>Not needed when Vaani's own Cal.com integration is used (Persona → Actions → Integration Tools: Check_availability_booking and book_appointment). Use these only as an alternative, with the secret as a header or query parameter.</p>
         <CopyBlock text={JSON.stringify(toolDefinitions(base), null, 2)} />
       </div>
 
